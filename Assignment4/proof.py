@@ -21,23 +21,29 @@ FILENAME = ''
 
 def main():
     
-    fileName = sys.argv[1]
-    one = 1
-    zero = 0
+    #fileName = sys.argv[1]
+    #one = 1
+    #zero = 0
     
-    with open(fileName) as f:
-        content = [x.strip() for x in f.readlines()]
-        rules = [x.split() for x in content]
-    ports = [0] * 65535
-    print (subNetProof('136.159.1.0','136.159.1.1/32'))
-    if(one):
-        print(one)
-    if(not zero):
-        print(zero)
-    print(rules)
+    #with open(fileName) as f:
+        #content = [x.strip() for x in f.readlines()]
+        #rules = [x.split() for x in content]
+    #ports = [0] * 65535
+    #print (subNetProof('136.159.1.0','136.159.1.1/32'))
+    #if(one):
+        #print(one)
+    #if(not zero):
+        #print(zero)
+    #print(rules)
+    stdinProof()
+    
     
 def subNetProof(ip, nw):
     return ipaddress.ip_address(ip) in ipaddress.ip_network(nw)
+    
+def stdinProof():
+    for line in sys.stdin:
+        print(line.split())
 
 if __name__ == '__main__':
     main()
