@@ -14,6 +14,8 @@ import os
 import hashlib
 import hmac
 import ipaddress
+import re
+import string
 
 BUFFER_SIZE = 4096
 READ = False
@@ -21,22 +23,33 @@ FILENAME = ''
 
 def main():
     
-    #fileName = sys.argv[1]
-    #one = 1
-    #zero = 0
+    fileName = sys.argv[1]
     
-    #with open(fileName) as f:
-        #content = [x.strip() for x in f.readlines()]
-        #rules = [x.split() for x in content]
-    #ports = [0] * 65535
+    #count = 0
+    with open(fileName) as f:
+       #count = count+1
+        content = [x.strip() for x in f.readlines()]
+        testString =  "$adsfasdf #"
+        #test = re.search(r'[#]',testString)
+        #print(content)
+        index = 0
+        for x in content:
+            if(re.search(r'[#]',x) is not None):
+                content[index] = x.replace(' ',"")
+                print(x)
+            #else:
+                #content[index] = x.replace(' ',"")
+                #print("none" + x)
+            index = index + 1
+        #print(re.search(r'[^#]',x)) for x in content 
+        rules = [x.split() for x in content]
+        count = 0
+        for r in rules:
+            count = count + 1
+            print(r)
+    ports = [0] * 65535
     #print (subNetProof('136.159.1.0','136.159.1.1/32'))
-    #if(one):
-        #print(one)
-    #if(not zero):
-        #print(zero)
-    #print(rules)
-    stdinProof()
-    
+   
     
 def subNetProof(ip, nw):
     return ipaddress.ip_address(ip) in ipaddress.ip_network(nw)

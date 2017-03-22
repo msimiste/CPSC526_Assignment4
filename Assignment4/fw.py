@@ -5,36 +5,33 @@
 #Tutorial Section: T02
 
 
-import socket
 import sys  
-import time
-import random
 import string
 import os
-import hashlib
-import hmac
 import ipaddress
+import re
 
 class firewall(object):
     def __init__(self, rules):
         self.rules = rules
         
 def main():
-    fileName = sys.argv[1]
-    
+    fileName = sys.argv[1]    
     fw = firewall(getRules(fileName))    
-    parsePackets(fw)
-    
-    
+    parsePackets(fw)    
 
 def getRules(fileName):
     with open(fileName) as f:
         content = [x.strip() for x in f.readlines()]
+        index = 0
+        for x in content:
+            if(re.search(r'[#]',x) is not None):
+                 content[index] = x.replace(' ',"")
+            index = index + 1
         rules = [x.split() for x in content]
-    out = map(lambda x: x[3].split(','), rules)
-        
     for x in rules:
-        x[3] = x[3].split(',')
+        if(len(x) > 3):
+            x[3] = x[3].split(',')
     
     return rules
 
@@ -42,16 +39,19 @@ def parsePackets(fWall):
     for line in sys.stdin:
         accept = False
         packet = line.split()
+        index = 0
         for r in fWall.rules:
-            accept = comparePacketToRule(packet,r,fWall)
+            index = index + 1
+            accept = comparePacketToRule(packet,r)
             if(accept):
-                print(r[1]+"("+ str(fWall.rules.index(r)+1)+") " + packet[0] + ' ' + packet[1] + ' ' + packet[2] + ' ' + packet[3])
+                print('{}({}) {} {} {} {}'.format(r[1], index,packet[0],packet[1],packet[2],packet[3]))   
                 break
         else:
-            print("drop() " + packet[0] + ' ' + packet[1] + ' ' + packet[2] + ' ' + packet[3])
-       
+            print("drop() {} {} {} {}".format(packet[0], packet[1], packet[2],packet[3]))       
 
-def comparePacketToRule(packet, rule, fw):
+def comparePacketToRule(packet, rule):
+    if(len(rule) <= 1):
+        return False
     valid = False        
     valid = (packet[0] == rule[0]) 
     valid = ((rule[2] == '*') or (ipaddress.ip_address(packet[1]) in ipaddress.ip_network(rule[2],False))) and valid   
