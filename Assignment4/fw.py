@@ -50,11 +50,21 @@ def parsePackets(fWall):
             print("drop() {} {} {} {}".format(packet[0], packet[1], packet[2],packet[3]))       
 
 def comparePacketToRule(packet, rule):
+    
+    valid = False     
+    
     if(len(rule) <= 1):
-        return False
-    valid = False        
-    valid = (packet[0] == rule[0]) 
-    valid = ((rule[2] == '*') or (ipaddress.ip_address(packet[1]) in ipaddress.ip_network(rule[2],False))) and valid   
+        return False     
+           
+    address = packet[1]
+    
+    try:
+        address = ipaddress.ip_address(address)        
+    except ValueError as e:
+        return False       
+        
+    valid = (packet[0] == rule[0])
+    valid = ((rule[2] == '*') or (address in ipaddress.ip_network(rule[2],False))) and valid   
     valid = ((packet[2] in rule[3]) or (rule[3][0] == '*')) and valid    
     if(len(rule) == 5):
         valid = (packet[3] == str(1)) and valid     
